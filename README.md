@@ -13,7 +13,7 @@ request is an HTMX request.
 
 ```ts
 import { Application } from "https://deno.land/x/oak/mod.ts";
-import { htmxMiddleware } from "https://deno.land/x/htmx/mod.ts";
+import htmxMiddleware from "https://deno.land/x/oak_htmx/main.ts";
 
 const app = new Application();
 
