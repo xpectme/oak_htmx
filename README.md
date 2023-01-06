@@ -30,7 +30,42 @@ app.use((ctx) => {
 });
 ```
 
-## State references for `ctx.state.htmx` methods
+## `ctx.state.htmx` properties
+
+### `ctx.state.htmx.isHTMX`
+
+A boolean that is `true` if the request is an HTMX request.
+
+### `ctx.state.htmx.boosted`
+
+Indicates that the request is via an element using hx-boost
+
+### `ctx.state.htmx.historyRestoreRequest`
+
+`true` if the request is for history restoration after a miss in the local history cache
+
+### `ctx.state.htmx.currentUrl`
+
+The current URL of the browser
+
+### `ctx.state.htmx.prompt`
+
+The user response to a `HX-Prompt` header
+
+### `ctx.state.htmx.targetId`
+
+The ID of the element that is the target of the request
+
+### `ctx.state.htmx.triggerId`
+
+The ID of the element that triggered the request
+
+### `ctx.state.htmx.triggerName`
+
+The name of the element that triggered the request
+
+
+## `ctx.state.htmx` methods
 
 ### `ctx.state.htmx.location(hxLocation: string | Partial<HTMXLocation>)`
 
@@ -74,7 +109,7 @@ The `HX-Refresh` header is used to tell the client to refresh the current page.
 ctx.state.htmx.refresh();
 ```
 
-### `ctx.state.htmx.reswap(hxReswap: HTMXSwapModifiers)`
+### `ctx.state.htmx.reswap(...modifiers: HTMXSwapModifiers)`
 
 Allows you to specify how the response will be swapped. See hx-swap for possible
 values
@@ -138,10 +173,6 @@ Resulting HTTP header:
 ```
 HX-Trigger-After-Settle: {"my-event": "my message"}
 ```
-
-## State references for `ctx.state.htmx` properties
-
-location pushUrl replaceUrl redirect refresh reswap retarget trigger
 
 ## License
 
