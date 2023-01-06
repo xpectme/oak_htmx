@@ -33,7 +33,7 @@ Deno.test("Request has ajax boost", async () => {
     path: "/a",
     headers: [
       ["HX-Request", "true"],
-      ["HX-Boost", "true"],
+      ["HX-Boosted", "true"],
     ],
   });
   const next = testing.createMockNext();
