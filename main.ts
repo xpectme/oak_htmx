@@ -83,7 +83,7 @@ export class HTMX {
     this.#isHTMX = context.request.headers.get("HX-Request") === "true";
     if (this.#isHTMX) {
       this.#state = {
-        boosted: context.request.headers.get("HX-Boost") === "true",
+        boosted: context.request.headers.get("HX-Boosted") === "true",
         historyRestoreRequest:
           context.request.headers.get("HX-History-Restore-Request") === "true",
         currentUrl: context.request.headers.get("HX-Current-URL"),
