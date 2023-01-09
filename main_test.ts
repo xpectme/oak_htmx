@@ -289,7 +289,7 @@ Deno.test("Respond with refresh", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.refresh(true);
+  ctx.state.htmx.refresh();
   assertEquals(ctx.response.headers.get("HX-Refresh"), "true");
 });
 
