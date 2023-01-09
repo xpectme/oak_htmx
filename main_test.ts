@@ -258,7 +258,7 @@ Deno.test("Respond with redirect", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.redirect("/test");
+  ctx.state.redirect("/test");
   assertNotEquals(ctx.response.headers.get("Location"), "/test");
   assertEquals(ctx.response.headers.get("HX-Redirect"), "/test");
   assertEquals(ctx.response.status, 204);
@@ -272,7 +272,7 @@ Deno.test("Respond with redirect without HX-Request", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.redirect("/test");
+  ctx.state.redirect("/test");
   assertNotEquals(ctx.response.headers.get("HX-Redirect"), "/test");
   assertEquals(ctx.response.headers.get("Location"), "/test");
   assertEquals(ctx.response.status, 302);
@@ -289,7 +289,7 @@ Deno.test("Respond with refresh", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.refresh();
+  ctx.state.htmx.refresh(true);
   assertEquals(ctx.response.headers.get("HX-Refresh"), "true");
 });
 
