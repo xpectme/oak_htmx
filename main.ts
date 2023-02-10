@@ -1,10 +1,5 @@
-import { Context, HXHeaders, Status } from "./deps.ts";
-
-export interface HTMXState {
-  isHTMX: boolean;
-  htmx: HXHeaders;
-  redirect(url: string): void;
-}
+import type { Context } from "./deps.ts";
+import { HXHeaders, Status } from "./deps.ts";
 
 // generate a middleware for oak
 export default async function htmxMiddleware(
@@ -12,9 +7,9 @@ export default async function htmxMiddleware(
   next: () => Promise<unknown>,
 ) {
   const htmx = new HXHeaders(context.request.headers, context.response.headers);
-  context.state.isHTMX = htmx.isHTMX;
-  context.state.htmx = htmx;
-  context.state.redirect = (url: string) => {
+  context.isHTMX = htmx.isHTMX;
+  context.htmx = htmx;
+  context.redirect = (url: string) => {
     if (htmx.isHTMX) {
       context.response.status = Status.NoContent;
       htmx.redirect(url);

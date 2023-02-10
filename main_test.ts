@@ -1,12 +1,12 @@
-import { testing } from "https://deno.land/x/oak@v10.6.0/mod.ts";
+import { testing } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import {
   assertEquals,
   assertNotEquals,
-} from "https://deno.land/std@0.152.0/testing/asserts.ts";
-import htmxMiddleware, { HTMXState } from "./main.ts";
+} from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import htmxMiddleware from "./main.ts";
 
 Deno.test("HTMX exists", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -15,21 +15,21 @@ Deno.test("HTMX exists", async () => {
   const next = testing.createMockNext();
 
   await htmxMiddleware(ctx, next);
-  assertEquals(ctx.state.isHTMX, true);
+  assertEquals(ctx.isHTMX, true);
 });
 
 Deno.test("HTMX does not exist", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
   });
   const next = testing.createMockNext();
 
   await htmxMiddleware(ctx, next);
-  assertEquals(ctx.state.isHTMX, false);
+  assertEquals(ctx.isHTMX, false);
 });
 
 Deno.test("Request has ajax boost", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -40,12 +40,12 @@ Deno.test("Request has ajax boost", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.boosted, true);
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.boosted, true);
 });
 
 Deno.test("Request has restore history", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -56,12 +56,12 @@ Deno.test("Request has restore history", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.historyRestoreRequest, true);
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.historyRestoreRequest, true);
 });
 
 Deno.test("Request has Prompt", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -72,12 +72,12 @@ Deno.test("Request has Prompt", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.prompt, "test");
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.prompt, "test");
 });
 
 Deno.test("Request has Current URL", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -88,12 +88,12 @@ Deno.test("Request has Current URL", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.currentUrl, "http://example.com/test");
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.currentUrl, "http://example.com/test");
 });
 
 Deno.test("Request has target ID", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -104,12 +104,12 @@ Deno.test("Request has target ID", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.targetId, "test");
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.targetId, "test");
 });
 
 Deno.test("Request has Trigger Name", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -120,12 +120,12 @@ Deno.test("Request has Trigger Name", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.triggerName, "test");
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.triggerName, "test");
 });
 
 Deno.test("Request has Trigger ID", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -136,12 +136,12 @@ Deno.test("Request has Trigger ID", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  assertEquals(ctx.state.isHTMX, true);
-  assertEquals(ctx.state.htmx.state?.triggerId, "test");
+  assertEquals(ctx.isHTMX, true);
+  assertEquals(ctx.htmx.state?.triggerId, "test");
 });
 
 Deno.test("Respond with location string", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -151,11 +151,11 @@ Deno.test("Respond with location string", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.location("/test");
+  ctx.htmx.location("/test");
   assertEquals(ctx.response.headers.get("HX-Location"), "/test");
 });
 Deno.test("Respond with location object (only path)", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -165,12 +165,12 @@ Deno.test("Respond with location object (only path)", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.location({ path: "/test" });
+  ctx.htmx.location({ path: "/test" });
   assertEquals(ctx.response.headers.get("HX-Location"), "/test");
 });
 
 Deno.test("Respond with location object", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -180,7 +180,7 @@ Deno.test("Respond with location object", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.location({ path: "/test", event: "my-event" });
+  ctx.htmx.location({ path: "/test", event: "my-event" });
   assertEquals(
     ctx.response.headers.get("HX-Location"),
     '{"path":"/test","event":"my-event"}',
@@ -188,7 +188,7 @@ Deno.test("Respond with location object", async () => {
 });
 
 Deno.test("Respond with push URL", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -198,12 +198,12 @@ Deno.test("Respond with push URL", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.pushUrl("/test");
+  ctx.htmx.pushUrl("/test");
   assertEquals(ctx.response.headers.get("HX-Push-Url"), "/test");
 });
 
 Deno.test("Respond with push URL disabled", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -213,12 +213,12 @@ Deno.test("Respond with push URL disabled", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.pushUrl(false);
+  ctx.htmx.pushUrl(false);
   assertEquals(ctx.response.headers.get("HX-Push-Url"), "false");
 });
 
 Deno.test("Respond with replace URL", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -228,12 +228,12 @@ Deno.test("Respond with replace URL", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.replaceUrl("/test");
+  ctx.htmx.replaceUrl("/test");
   assertEquals(ctx.response.headers.get("HX-Replace-Url"), "/test");
 });
 
 Deno.test("Respond with replace URL disabled", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -243,12 +243,12 @@ Deno.test("Respond with replace URL disabled", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.replaceUrl(false);
+  ctx.htmx.replaceUrl(false);
   assertEquals(ctx.response.headers.get("HX-Replace-Url"), "false");
 });
 
 Deno.test("Respond with redirect", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -258,28 +258,28 @@ Deno.test("Respond with redirect", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.redirect("/test");
+  ctx.redirect("/test");
   assertNotEquals(ctx.response.headers.get("Location"), "/test");
   assertEquals(ctx.response.headers.get("HX-Redirect"), "/test");
   assertEquals(ctx.response.status, 204);
 });
 
 Deno.test("Respond with redirect without HX-Request", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
   });
   const next = testing.createMockNext();
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.redirect("/test");
+  ctx.redirect("/test");
   assertNotEquals(ctx.response.headers.get("HX-Redirect"), "/test");
   assertEquals(ctx.response.headers.get("Location"), "/test");
   assertEquals(ctx.response.status, 302);
 });
 
 Deno.test("Respond with refresh", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -289,12 +289,12 @@ Deno.test("Respond with refresh", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.refresh();
+  ctx.htmx.refresh();
   assertEquals(ctx.response.headers.get("HX-Refresh"), "true");
 });
 
 Deno.test("Respond with single reswap", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -304,12 +304,12 @@ Deno.test("Respond with single reswap", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.reswap("innerHTML");
+  ctx.htmx.reswap("innerHTML");
   assertEquals(ctx.response.headers.get("HX-Reswap"), "innerHTML");
 });
 
 Deno.test("Respond with reswap [innerHTML scroll:top swap:1s]", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -319,7 +319,7 @@ Deno.test("Respond with reswap [innerHTML scroll:top swap:1s]", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.reswap("innerHTML", "scroll:top", "swap:1s");
+  ctx.htmx.reswap("innerHTML", "scroll:top", "swap:1s");
   assertEquals(
     ctx.response.headers.get("HX-Reswap"),
     "innerHTML scroll:top swap:1s",
@@ -327,7 +327,7 @@ Deno.test("Respond with reswap [innerHTML scroll:top swap:1s]", async () => {
 });
 
 Deno.test("Respond with Retarget CSS Selector", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -337,12 +337,12 @@ Deno.test("Respond with Retarget CSS Selector", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.retarget("#css-selector");
+  ctx.htmx.retarget("#css-selector");
   assertEquals(ctx.response.headers.get("HX-Retarget"), "#css-selector");
 });
 
 Deno.test("Respond with trigger event", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -352,7 +352,7 @@ Deno.test("Respond with trigger event", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.trigger({ "my-event": "my-value" });
+  ctx.htmx.trigger({ "my-event": "my-value" });
   assertEquals(
     ctx.response.headers.get("HX-Trigger"),
     '{"my-event":"my-value"}',
@@ -360,7 +360,7 @@ Deno.test("Respond with trigger event", async () => {
 });
 
 Deno.test("Respond with trigger event with multiple values", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -370,7 +370,7 @@ Deno.test("Respond with trigger event with multiple values", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.trigger({ "my-event": ["my-value", "my-value2"] });
+  ctx.htmx.trigger({ "my-event": ["my-value", "my-value2"] });
   assertEquals(
     ctx.response.headers.get("HX-Trigger"),
     '{"my-event":["my-value","my-value2"]}',
@@ -378,7 +378,7 @@ Deno.test("Respond with trigger event with multiple values", async () => {
 });
 
 Deno.test("Respond with trigger event with multiple values and multiple events", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -388,7 +388,7 @@ Deno.test("Respond with trigger event with multiple values and multiple events",
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.trigger({
+  ctx.htmx.trigger({
     "my-event": { prop: "value" },
     "my-event2": "my-value3",
   });
@@ -399,7 +399,7 @@ Deno.test("Respond with trigger event with multiple values and multiple events",
 });
 
 Deno.test("Respond with trigger after settle", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -409,7 +409,7 @@ Deno.test("Respond with trigger after settle", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.trigger({ "my-event": "my-value" }, "aftersettle");
+  ctx.htmx.trigger({ "my-event": "my-value" }, "aftersettle");
   assertEquals(
     ctx.response.headers.get("HX-Trigger-After-Settle"),
     '{"my-event":"my-value"}',
@@ -417,7 +417,7 @@ Deno.test("Respond with trigger after settle", async () => {
 });
 
 Deno.test("Respond with trigger after swap", async () => {
-  const ctx = testing.createMockContext<"/a", never, HTMXState>({
+  const ctx = testing.createMockContext({
     path: "/a",
     headers: [
       ["HX-Request", "true"],
@@ -427,7 +427,7 @@ Deno.test("Respond with trigger after swap", async () => {
 
   await htmxMiddleware(ctx, next);
 
-  ctx.state.htmx.trigger({ "my-event": "my-value" }, "afterswap");
+  ctx.htmx.trigger({ "my-event": "my-value" }, "afterswap");
   assertEquals(
     ctx.response.headers.get("HX-Trigger-After-Swap"),
     '{"my-event":"my-value"}',
